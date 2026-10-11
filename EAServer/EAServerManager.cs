@@ -151,12 +151,22 @@ namespace SSX3_Server.EAServer
             NewClientListening(config.ListenerPortPal, true);
         }
 
+        public IPAddress BindAddress()
+        {
+            if (IPAddress.TryParse(config.BindIP, out var addr))
+            {
+                return addr;
+            }
+            ConsoleManager.WriteLine("Invalid BindIP '" + config.BindIP + "', falling back to 127.0.0.1");
+            return IPAddress.Loopback;
+        }
+
         public async void NewClientListening(int Port, bool PAL)
         {
             while (true)
             {
-                TcpListener server = new TcpListener(IPAddress.Any, Port);
-                TcpListener server1 = new TcpListener(IPAddress.Any, config.GamePort);
+                TcpListener server = new TcpListener(BindAddress(), Port);
+                TcpListener server1 = new TcpListener(BindAddress(), config.GamePort);
                 bool Server1Active = false;
                 try
                 {
@@ -260,7 +270,7 @@ namespace SSX3_Server.EAServer
             {
                 try
                 {
-                    TcpListener server = new TcpListener(IPAddress.Any, config.BuddyPort);
+                    TcpListener server = new TcpListener(BindAddress(), config.BuddyPort);
 
                     server.Start();
 

@@ -12,6 +12,13 @@ namespace SSX3_Server.EAServer
     {
         public bool DirectConnect = false;
         public string GameIP = "192.168.0.141";
+        // Local address the lobby/game/buddy listeners bind to. Loopback by
+        // default so a lane/dev server never listens on LAN/internet.
+        public string BindIP = "127.0.0.1";
+        // Quick-play: seconds a queued player waits for an opponent before the
+        // no-opponent hook fires (bot path stub: log + this config).
+        public int QuickPlayWaitSeconds = 90;
+        public string QuickPlayNoOpponentHook = "log";
         public bool PalListener = true;
         public bool NTSCListener = true;
         public bool AllowCrossPlay = false;
