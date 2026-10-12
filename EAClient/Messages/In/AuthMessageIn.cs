@@ -61,6 +61,44 @@ namespace SSX3_Server.EAClient.Messages
 
             //Confirm Auth Data with saves
             var UserData = EAClientManager.GetUserData(NAME);
+            // ONL4-P2 anonymous quick play: accept any non-banned,
+            // non-empty name, auto-creating the user and a default
+            // persona (rank/highscore storage stays default/ignored).
+            // The existing login-ok path below then runs unchanged.
+            if (UserData == null && !string.IsNullOrEmpty(NAME) &&
+                !EAServerManager.Instance.BannedNames.Contains(NAME))
+            {
+                string now = DateTime.Now.ToString("yyyy.MM.dd hh:mm:ss");
+                var nu = new EAUserData();
+                nu.Name = NAME;
+                nu.Pass = "";
+                nu.Spam = "0";
+                nu.Mail = "";
+                nu.Gend = "m";
+                nu.Born = "1990.01.01";
+                nu.Defper = NAME;
+                nu.Alts = "";
+                nu.Minage = "1";
+                nu.Lang = LANG;
+                nu.Prod = PROD;
+                nu.Vers = VERS;
+                nu.GameReg = SLUS;
+                nu.PersonaList = new List<string>();
+                nu.Since = now;
+                nu.Last = now;
+                nu.Bypass = true;
+                nu.IPApproved.Add(ByteUtil.CreateSHA256(client.IPAddress));
+                var np = new EAUserPersona();
+                np.Owner = NAME;
+                np.Name = NAME;
+                np.Since = now;
+                np.Last = now;
+                np.CreateJson(AppContext.BaseDirectory + "\\Personas\\" + NAME.ToLower() + ".json");
+                nu.PersonaList.Add(np.Name);
+                nu.CreateJson(AppContext.BaseDirectory + "\\Users\\" + NAME.ToLower() + ".json");
+                ConsoleManager.WriteLine(client.IPAddress + " auto-created anonymous account " + NAME);
+                UserData = nu;
+            }
             if (UserData != null)
             {
                 AuthMessageOut msg2 = new AuthMessageOut();

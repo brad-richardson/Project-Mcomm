@@ -250,7 +250,17 @@ namespace SSX3_Server.EAClient
                 var msg = (EAMessage)Activator.CreateInstance(c);
                 msg.PraseData(Data, false, IPAddress + ":" + GamePort + " Main Server");
 
-                msg.ProcessCommand(this, room);
+                // ONL4-P2 anonymous: one bad message (e.g. rank with no
+                // stored highscore) must not kill the session; log and
+                // continue with the next message.
+                try
+                {
+                    msg.ProcessCommand(this, room);
+                }
+                catch (Exception e)
+                {
+                    ConsoleManager.WriteLine("message failed (" + InMessageType + "): " + e.Message);
+                }
             }
         }
 
@@ -275,7 +285,16 @@ namespace SSX3_Server.EAClient
                 var msg = (EAMessage)Activator.CreateInstance(c);
                 msg.PraseData(Data, true, IPAddress + ":" + GamePort + " Buddy Server");
 
-                msg.ProcessCommand(this, room);
+                // ONL4-P2 anonymous: one bad message must not kill the
+                // session; log and continue with the next message.
+                try
+                {
+                    msg.ProcessCommand(this, room);
+                }
+                catch (Exception e)
+                {
+                    ConsoleManager.WriteLine("buddy message failed (" + InMessageType + "): " + e.Message);
+                }
             }
         }
 
