@@ -69,10 +69,13 @@ namespace SSX3_Server.EAServer
 
             ConsoleManager.WriteLine("Initalising Inital Rooms...");
 
-            rooms.Add(new EAServerRoom(1,"0.0.0.0", "Beginner", "Peak 1", "","Mcomm", true));
-            rooms.Add(new EAServerRoom(2, "0.0.0.0", "Advanced", "Peak 2", "", "Mcomm", true));
-            rooms.Add(new EAServerRoom(3, "0.0.0.0", "Elite", "Peak 3", "", "Mcomm", true));
-            rooms.Add(new EAServerRoom(4, "0.0.0.0", "Intermediate", "Peak 4", "", "Mcomm", true));
+            // ONL4-P2: rooms advertise the reachable game IP (the game
+            // client may validate +rom A; 0.0.0.0 is unusable).
+            string roomAddr = config.GameIP.ToString();
+            rooms.Add(new EAServerRoom(1, roomAddr, "Beginner", "Peak 1", "", "Mcomm", true));
+            rooms.Add(new EAServerRoom(2, roomAddr, "Advanced", "Peak 2", "", "Mcomm", true));
+            rooms.Add(new EAServerRoom(3, roomAddr, "Elite", "Peak 3", "", "Mcomm", true));
+            rooms.Add(new EAServerRoom(4, roomAddr, "Intermediate", "Peak 4", "", "Mcomm", true));
 
             RoomIDCount = 5;
 
