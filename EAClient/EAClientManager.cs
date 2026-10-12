@@ -81,7 +81,11 @@ namespace SSX3_Server.EAClient
 
             LastRecive = DateTime.Now;
             LastSend = DateTime.Now;
-            LastPing = DateTime.Now;
+            // ONL4-P3: the game client must see server vitality (~png)
+            // well inside its ~30 s login window (the first ping used
+            // to race the teardown at +30 s). Backdate so the first
+            // ~png fires ~3 s after connect; steady-state stays 30 s.
+            LastPing = DateTime.Now.AddSeconds(-27);
             LastRecivePing = DateTime.Now;
 
             LoopThread = new Thread(MainListen);
